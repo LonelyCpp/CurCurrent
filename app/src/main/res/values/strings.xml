@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CurCurrent</string>
+    <string name="amount">amount</string>
 </resources>
