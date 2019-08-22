@@ -3,7 +3,6 @@ package com.example.curcurrent
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import com.example.curcurrent.model.Currency
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity(), CurrencyView {
     override fun fillRatesData(rates: List<Currency>) {
         ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_item,
+            R.layout.country_spinner_item_white,
             rates
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity(), CurrencyView {
         }
         ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_item,
+            R.layout.country_spinner_item_black,
             rates
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
@@ -59,6 +58,7 @@ class MainActivity : AppCompatActivity(), CurrencyView {
                 resultText.text = result.toString()
             }
         }
+
     }
 
     override fun onDestroy() {
