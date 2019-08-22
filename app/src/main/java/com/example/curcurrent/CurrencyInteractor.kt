@@ -6,10 +6,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class CurrencyInteractor(val view : CurrencyView){
+class CurrencyInteractor(private val view : CurrencyView){
 
     var ratesAPI = RatesAPI.create()
     var disposables = CompositeDisposable()
+    var rates:List<Currency>? = null
 
     fun loadRates(){
         view.setLoading(true)
@@ -20,7 +21,7 @@ class CurrencyInteractor(val view : CurrencyView){
                 val rateTable = ArrayList<Currency>()
                 for(rate in it.rates){
                     rateTable.add(
-                        Currency(rate.key, "test", rate.value)
+                        Currency(rate.key.toUpperCase(), "test", rate.value)
                     )
                 }
                 rateTable
@@ -28,13 +29,18 @@ class CurrencyInteractor(val view : CurrencyView){
             .subscribe(
                 { result ->
                     run {
-                        Log.d("api", result.toString())
+                        rates = result
+                        view.fillRatesData(result)
                         view.setLoading(false)
                     }
                 },
                 { error -> Log.d("api", error.localizedMessage) }
             )
         disposables.add(subscribe)
+    }
+
+    fun convert(amount: Double, source: Currency, destination: Currency): Double{
+        return amount * (destination.rate / source.rate)
     }
 
     fun disposeObservaples(){
