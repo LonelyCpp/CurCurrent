@@ -10,12 +10,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), CurrencyView {
 
-    val currencyInteractor = CurrencyInteractor(
-
-        this)
+    val currencyInteractor = CurrencyInteractor(this)
 
     override fun getContext(): Context {
-        return getContext()
+        return applicationContext
     }
 
     override fun setLoading(loading: Boolean) {
