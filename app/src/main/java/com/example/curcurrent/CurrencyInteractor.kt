@@ -9,24 +9,28 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
-class CurrencyInteractor(private val view : CurrencyView){
+class CurrencyInteractor(private val view: CurrencyView) {
 
     var ratesAPI = RatesAPI.create()
     var disposables = CompositeDisposable()
-    var rates:List<Currency>? = null
-    var currencyMap:HashMap<String, String>? = null
+    var rates: List<Currency>? = null
+    var currencyMap: HashMap<String, String>? = null
 
 
-    fun loadRates(){
+    fun loadRates() {
         view.setLoading(true)
         val subscribe = ratesAPI.currentRates()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map{
+            .map {
                 val rateTable = ArrayList<Currency>()
-                for(rate in it.rates){
+                for (rate in it.rates) {
                     rateTable.add(
-                        Currency(rate.key.toUpperCase(), countryMapper(rate.key.toUpperCase()), rate.value)
+                        Currency(
+                            rate.key.toUpperCase(),
+                            countryMapper(rate.key.toUpperCase()),
+                            rate.value
+                        )
                     )
                 }
                 rateTable
@@ -44,17 +48,17 @@ class CurrencyInteractor(private val view : CurrencyView){
         disposables.add(subscribe)
     }
 
-    fun convert(amount: Double, source: Currency, destination: Currency): Double{
+    fun convert(amount: Double, source: Currency, destination: Currency): Double {
         return amount * (destination.rate / source.rate)
     }
 
-    fun disposeObservaples(){
+    fun disposeObservables() {
         disposables.clear()
     }
 
-    private fun countryMapper(shortForm : String):String{
+    private fun countryMapper(shortForm: String): String {
 
-        if(currencyMap == null){
+        if (currencyMap == null) {
             this.loadCurrencyMap()
         }
 
@@ -62,8 +66,8 @@ class CurrencyInteractor(private val view : CurrencyView){
     }
 
     private fun loadCurrencyMap() {
-                val context = view.getContext()
-        val json : String = context.resources
+        val context = view.getContext()
+        val json: String = context.resources
             .openRawResource(R.raw.currency_codes)
             .bufferedReader()
             .use {
