@@ -3,7 +3,6 @@ package com.example.curcurrent
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.curcurrent.adapter.CurrencySpinnerAdapter
 import com.example.curcurrent.model.Currency
@@ -20,11 +19,7 @@ class MainActivity : AppCompatActivity(), CurrencyView {
     }
 
     override fun setLoading(loading: Boolean) {
-        if (loading) {
-            progressBar.visibility = View.VISIBLE
-        } else {
-            progressBar.visibility = View.GONE
-        }
+        srlContainer.isRefreshing = loading
     }
 
     override fun fillRatesData(rates: List<Currency>) {
@@ -39,6 +34,7 @@ class MainActivity : AppCompatActivity(), CurrencyView {
             destinationCountrySpinner.adapter = it
             destinationCountrySpinner.onItemSelectedListener = spinnerItemSelectedCallback
         }
+        srlContainer.isRefreshing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +44,9 @@ class MainActivity : AppCompatActivity(), CurrencyView {
         amountInput.addTextChangedListener(TextChangedCallback(this::convert))
         btnSwapCurrency.setOnClickListener {
             swapCurrencies()
+        }
+        srlContainer.setOnRefreshListener {
+            currencyInteractor.loadRates()
         }
     }
 
