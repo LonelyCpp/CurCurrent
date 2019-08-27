@@ -1,68 +1,77 @@
 package com.example.curcurrent
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
+import com.example.curcurrent.adapter.CurrencySpinnerAdapter
 import com.example.curcurrent.model.Currency
+import com.example.curcurrent.utility.SpinnerItemSelectedCallback
+import com.example.curcurrent.utility.TextChangedCallback
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), CurrencyView {
 
-    val currencyInteractor = CurrencyInteractor(
-
-        this)
+    private val currencyInteractor = CurrencyInteractor(this)
 
     override fun getContext(): Context {
-        return getContext()
+        return applicationContext
     }
 
     override fun setLoading(loading: Boolean) {
-        if(loading){
-            progressBar.visibility = View.VISIBLE
-        } else {
-            progressBar.visibility = View.GONE
-        }
+        srlContainer.isRefreshing = loading
     }
 
     override fun fillRatesData(rates: List<Currency>) {
-        ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            rates
-        ).also { arrayAdapter ->
-            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
-            sourceCountrySpinner.adapter = arrayAdapter
+        val spinnerItemSelectedCallback = SpinnerItemSelectedCallback(this::convert)
+
+        CurrencySpinnerAdapter(this, rates, Color.WHITE).also {
+            sourceCountrySpinner.adapter = it
+            sourceCountrySpinner.onItemSelectedListener = spinnerItemSelectedCallback
         }
-        ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            rates
-        ).also { arrayAdapter ->
-            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item)
-            destinationCountrySpinner.adapter = arrayAdapter
+
+        CurrencySpinnerAdapter(this, rates).also {
+            destinationCountrySpinner.adapter = it
+            destinationCountrySpinner.onItemSelectedListener = spinnerItemSelectedCallback
         }
+        srlContainer.isRefreshing = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         currencyInteractor.loadRates()
-        convertBtn.setOnClickListener {
-            val amount = amountInput.text.toString()
-            val src = sourceCountrySpinner.selectedItem
-            val dst = destinationCountrySpinner.selectedItem
-            if(src is Currency && dst is Currency && amount.isNotBlank()){
-                val result = currencyInteractor.convert(amount.toDouble(), src, dst)
-                resultText.text = result.toString()
-            }
+        amountInput.addTextChangedListener(TextChangedCallback(this::convert))
+        btnSwapCurrency.setOnClickListener {
+            swapCurrencies()
+        }
+        srlContainer.setOnRefreshListener {
+            currencyInteractor.loadRates()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        currencyInteractor.disposeObservaples()
+        currencyInteractor.disposeObservables()
+    }
+
+    private fun convert() {
+        val amount = amountInput.text.toString()
+        val src = sourceCountrySpinner.selectedItem
+        val dst = destinationCountrySpinner.selectedItem
+        if (amount.isBlank()) {
+            resultText.text = getString(R.string.zero)
+        } else if (src is Currency && dst is Currency) {
+            val result = currencyInteractor.convert(amount.toDouble(), src, dst)
+            resultText.text = "%.4f".format(result)
+        }
+    }
+
+    private fun swapCurrencies() {
+        val srcIndex = sourceCountrySpinner.selectedItemId
+        val dstIndex = destinationCountrySpinner.selectedItemId
+
+        sourceCountrySpinner.setSelection(dstIndex.toInt())
+        destinationCountrySpinner.setSelection(srcIndex.toInt())
     }
 }
