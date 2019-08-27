@@ -2,14 +2,9 @@ package com.example.curcurrent
 
 import android.content.Context
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.AdapterView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.curcurrent.adapter.CurrencySpinnerAdapter
 import com.example.curcurrent.model.Currency
 import com.example.curcurrent.utility.SpinnerItemSelectedCallback
@@ -50,11 +45,10 @@ class MainActivity : AppCompatActivity(), CurrencyView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         currencyInteractor.loadRates()
-        convertBtn.setOnClickListener {
-            convert()
-        }
-
         amountInput.addTextChangedListener(TextChangedCallback(this::convert))
+        btnSwapCurrency.setOnClickListener {
+            swapCurrencies()
+        }
     }
 
     override fun onDestroy() {
@@ -72,5 +66,13 @@ class MainActivity : AppCompatActivity(), CurrencyView {
             val result = currencyInteractor.convert(amount.toDouble(), src, dst)
             resultText.text = "%.4f".format(result)
         }
+    }
+
+    private fun swapCurrencies() {
+        val srcIndex = sourceCountrySpinner.selectedItemId
+        val dstIndex = destinationCountrySpinner.selectedItemId
+
+        sourceCountrySpinner.setSelection(dstIndex.toInt())
+        destinationCountrySpinner.setSelection(srcIndex.toInt())
     }
 }
