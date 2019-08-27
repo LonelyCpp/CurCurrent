@@ -33,6 +33,9 @@ class CurrencyInteractor(private val view: CurrencyView) {
                         )
                     )
                 }
+
+                rateTable.sortBy { item -> item.countryName }
+
                 rateTable
             }
             .subscribe(

@@ -67,7 +67,8 @@
                     android:id="@+id/resultText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:text="@string/zero"/>
         </LinearLayout>
 
         <ProgressBar
