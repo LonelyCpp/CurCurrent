@@ -3,4 +3,5 @@
     <string name="amount">amount</string>
     <string name="convert">Convert</string>
     <string name="zero">0</string>
+    <string name="currency_val">%1$.2f %2$s</string>
 </resources>
