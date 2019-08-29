@@ -25,13 +25,25 @@ class MainActivity : AppCompatActivity(), CurrencyView {
     override fun fillRatesData(rates: List<Currency>) {
         val spinnerItemSelectedCallback = SpinnerItemSelectedCallback(this::convert)
 
+
+
         CurrencySpinnerAdapter(this, rates, Color.WHITE).also {
+            var selectedItemId = 0
+            if(sourceCountrySpinner.selectedItem != null){
+                selectedItemId = sourceCountrySpinner.selectedItemId.toInt()
+            }
             sourceCountrySpinner.adapter = it
+            sourceCountrySpinner.setSelection(selectedItemId)
             sourceCountrySpinner.onItemSelectedListener = spinnerItemSelectedCallback
         }
 
         CurrencySpinnerAdapter(this, rates).also {
+            var selectedItemId = 0
+            if(destinationCountrySpinner.selectedItem != null){
+                selectedItemId = destinationCountrySpinner.selectedItemId.toInt()
+            }
             destinationCountrySpinner.adapter = it
+            destinationCountrySpinner.setSelection(selectedItemId)
             destinationCountrySpinner.onItemSelectedListener = spinnerItemSelectedCallback
         }
         srlContainer.isRefreshing = false
