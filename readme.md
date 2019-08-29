@@ -14,6 +14,6 @@ A simple android app that helps you to keep track of the latest currency exchang
 
 #### Screenshots
 
-![android](./screenshots/s0.jpg?raw=true 'android')
-![android](./screenshots/s1.jpg?raw=true 'android')
+![android](./screenshots/s0.png?raw=true 'android')
+![android](./screenshots/s1.png?raw=true 'android')
 
