@@ -57,13 +57,20 @@ class MainActivity : AppCompatActivity(), CurrencyView {
 
     private fun convert() {
         val amount = amountInput.text.toString()
+
         val src = sourceCountrySpinner.selectedItem
         val dst = destinationCountrySpinner.selectedItem
+
         if (amount.isBlank()) {
             resultText.text = getString(R.string.zero)
         } else if (src is Currency && dst is Currency) {
             val result = currencyInteractor.convert(amount.toDouble(), src, dst)
-            resultText.text = "%.4f".format(result)
+            resultText.text = String.format("%.4f", result)
+
+            tvSourceRate.text = getString(R.string.currency_val, 1f, src.shortForm)
+
+            tvDestinationRate.text = getString(R.string.currency_val,
+                currencyInteractor.convert(1.0, src, dst), dst.shortForm)
         }
     }
 
